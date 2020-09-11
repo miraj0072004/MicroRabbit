@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MediatR;
 
 namespace MicroRabbit.Banking.Domain.Commands
 {
-    public class CreateTransferCommand:TransferCommand
+    public class CreateTransferCommand:TransferCommand, IRequest<Unit>
     {
         public CreateTransferCommand(int from, int to, decimal amount)
         {

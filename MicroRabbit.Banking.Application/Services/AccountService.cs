@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Text;
 using MicroRabbit.Banking.Application.Interfaces;
 using MicroRabbit.Banking.Application.Models;
+using MicroRabbit.Banking.Domain.Commands;
 using MicroRabbit.Banking.Domain.Interfaces;
 using MicroRabbit.Banking.Domain.Models;
+using MicroRabbit.Domain.Core.Bus;
 
 namespace MicroRabbit.Banking.Application.Services
 {
     public class AccountService: IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IEventBus _bus;
 
-        public AccountService(IAccountRepository accountRepository)
+
+        public AccountService(IAccountRepository accountRepository, IEventBus bus)
         {
             _accountRepository = accountRepository;
+            _bus = bus;
         }
 
         public IEnumerable<Account> GetAccounts()
@@ -24,7 +29,15 @@ namespace MicroRabbit.Banking.Application.Services
 
         public void Transfer(AccountTransfer accountTransfer)
         {
-            throw new NotImplementedException();
+
+            var createTransferCommand = new CreateTransferCommand
+            (
+                from:accountTransfer.FromAccount,
+                to:accountTransfer.ToAccount,
+                amount:accountTransfer.TransferAmount
+            );
+
+            _bus.SendCommand(createTransferCommand);
         }
     }
 }
